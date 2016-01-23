@@ -45,7 +45,7 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php5/fpm/php-fpm.conf
 RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php5/fpm/php.ini
 
-RUN mkdir -p        /var/www/html
+RUN mkdir -p        /var/www
 ADD build/default   /etc/nginx/sites-available/default
 RUN mkdir           /etc/service/nginx
 ADD build/nginx.sh  /etc/service/nginx/run
@@ -58,7 +58,7 @@ RUN chmod +x        /etc/service/phpfpm/run
 RUN mkdir /etc/service/memcached
 ADD build/memcached.sh /etc/service/memcached/run
 RUN chmod 0755 /etc/service/memcached/run
-RUN echo "<?php phpinfo(); ?>" >> /var/www/html/index.php
+RUN echo "<?php phpinfo(); ?>" >> /var/www/index.php
 EXPOSE 80
 # End Nginx-PHP
 
