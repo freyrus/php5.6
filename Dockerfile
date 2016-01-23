@@ -58,6 +58,7 @@ RUN chmod +x        /etc/service/phpfpm/run
 RUN mkdir /etc/service/memcached
 ADD build/memcached.sh /etc/service/memcached/run
 RUN chmod 0755 /etc/service/memcached/run
+RUN ls /run/php/
 EXPOSE 80
 # End Nginx-PHP
 
