@@ -44,6 +44,8 @@ RUN mv composer.phar /usr/local/bin/composer
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php5/fpm/php-fpm.conf
 RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php5/fpm/php.ini
+RUN sed -i "s/;max_execution_time=30/max_execution_time=900/" /etc/php5/fpm/php.ini
+RUN sed -i "s/;memory_limit=128M/memory_limit=1024M/" /etc/php5/fpm/php.ini
 
 RUN mkdir -p        /var/www
 ADD build/default   /etc/nginx/sites-available/default
