@@ -40,9 +40,6 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y nginx gearman memcached
 RUN groupmod -g 1600 www-data
 RUN usermod -u 1600 www-data
 
-# add ID for user nginx
-RUN groupmod -g 1601 nginx
-RUN usermod -u 1601 nginx
 # Install composer globally. Life is too short for local per prj installer
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
