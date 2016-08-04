@@ -1,4 +1,4 @@
-FROM phusion/baseimage:0.9.17
+FROM phusion/baseimage:latest
 
 MAINTAINER gialac <gialacmail@gmail.com>
 
@@ -18,16 +18,34 @@ ENV LC_ALL en_US.UTF-8
 RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
 
 CMD ["/sbin/my_init"]
+# Install base packages
+ENV DEBIAN_FRONTEND noninteractive
 
-# Nginx-PHP Installation
-RUN apt-get update
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y vim curl wget build-essential python-software-properties libcurl4-openssl-dev pkg-config
 RUN add-apt-repository -y ppa:ondrej/php5-5.6
 RUN add-apt-repository -y ppa:nginx/stable
-RUN apt-get update
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y --force-yes php5-cli php5-fpm php5-mysql php5-pgsql php5-sqlite php5-curl\
+
+RUN apt-get update && \
+    apt-get -yq install wget && \
+    wget -O - https://download.newrelic.com/548C16BF.gpg | apt-key add - && \
+    sh -c 'echo "deb http://apt.newrelic.com/debian/ newrelic non-free" > /etc/apt/sources.list.d/newrelic.list' && \
+    apt-get update && \
+    apt-get -yq upgrade && \
+    apt-get -yq install \
+     	nano \
+        aptitude \
+        git \
+        curl \
+        vim \
+        build-essential \
+        python-software-properties \
+        libcurl4-openssl-dev \
+        pkg-config
+
+# Nginx-PHP Installation
+
+RUN apt-get install -y --force-yes php5-cli php5-fpm php5-mysql php5-pgsql php5-sqlite php5-curl\
        php5-gd php5-intl php5-imap php5-tidy php5-memcached\
-       php5-mcrypt php-pear php5-dev
+       php5-mcrypt php-pear php5-dev newrelic-php5
 
 RUN sed     -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php5/fpm/php.ini
 RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php5/cli/php.ini
@@ -35,7 +53,7 @@ RUN sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ Asia\/Saigon/g' /etc/php
 
 RUN sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ Asia\/Saigon/g' /etc/php5/cli/php.ini
 
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y nginx gearman memcached
+RUN apt-get install -y nginx gearman memcached
 # add ID for user www-data
 RUN groupmod -g 1600 www-data
 RUN usermod -u 1600 www-data
@@ -47,8 +65,10 @@ RUN mv composer.phar /usr/local/bin/composer
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php5/fpm/php-fpm.conf
 RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php5/fpm/php.ini
-RUN sed -i "s/;max_execution_time=30/max_execution_time=900/" /etc/php5/fpm/php.ini
-RUN sed -i "s/;memory_limit=128M/memory_limit=1024M/" /etc/php5/fpm/php.ini
+RUN sed -i "s/;max_execution_time.*/max_execution_time=1600/" /etc/php5/fpm/php.ini
+RUN sed -i "s/;memory_limit.*/memory_limit=3024M/" /etc/php5/fpm/php.ini
+
+RUN newrelic-install install
 
 RUN mkdir -p        /var/www
 ADD build/default   /etc/nginx/sites-available/default
