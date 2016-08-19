@@ -1,0 +1,11 @@
+containers:
+    mantis:
+        build:
+            context: .
+        image: ventive/mantis
+        run:
+            publish: ["8090:80"]
+            detach: true
+        exec:
+            interactive: true
+            tty: true

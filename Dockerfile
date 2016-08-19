@@ -21,7 +21,7 @@ CMD ["/sbin/my_init"]
 # Install base packages
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN add-apt-repository -y ppa:ondrej/php5-5.6
+RUN add-apt-repository -y ppa:ondrej/php
 RUN add-apt-repository -y ppa:nginx/stable
 
 RUN apt-get update && \
@@ -43,15 +43,15 @@ RUN apt-get update && \
 
 # Nginx-PHP Installation
 
-RUN apt-get install -y --force-yes php5-cli php5-fpm php5-mysql php5-pgsql php5-sqlite php5-curl\
-       php5-gd php5-intl php5-imap php5-tidy php5-memcached\
-       php5-mcrypt php-pear php5-dev newrelic-php5
+RUN apt-get install -y --force-yes php5.6-cli php5.6-fpm php5.6-mysql php5.6-pgsql php5.6-sqlite php5.6-curl\
+       php5.6-gd php5.6-intl php5.6-imap php5.6-tidy php5.6-memcached\
+       php5.6-mcrypt php-pear php5.6-dev newrelic-php5
 
-RUN sed     -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php5/fpm/php.ini
-RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php5/cli/php.ini
-RUN sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ Asia\/Saigon/g' /etc/php5/cli/php.ini
+RUN sed     -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php/5.6/cli/php.ini
+RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php/5.6/cli/php.ini
+RUN sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ Asia\/Saigon/g' /etc/php/5.6/cli/php.ini
 
-RUN sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ Asia\/Saigon/g' /etc/php5/cli/php.ini
+RUN sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ Asia\/Saigon/g' /etc/php/5.6/cli/php.ini
 
 RUN apt-get install -y nginx gearman memcached
 # add ID for user www-data
@@ -63,10 +63,10 @@ RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
-RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php5/fpm/php-fpm.conf
-RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php5/fpm/php.ini
-RUN sed -i "s/;max_execution_time.*/max_execution_time=1600/" /etc/php5/fpm/php.ini
-RUN sed -i "s/;memory_limit.*/memory_limit=3024M/" /etc/php5/fpm/php.ini
+RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php/5.6/fpm/php-fpm.conf
+RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php/5.6/fpm/php.ini
+RUN sed -i "s/;max_execution_time.*/max_execution_time=1600/" /etc/php/5.6/fpm/php.ini
+RUN sed -i "s/;memory_limit.*/memory_limit=3024M/" /etc/php/5.6/fpm/php.ini
 
 RUN newrelic-install install
 
